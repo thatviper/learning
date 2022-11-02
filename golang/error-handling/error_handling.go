@@ -1,6 +1,5 @@
 package erratum
 
-
 func Use(opener ResourceOpener, input string) (err error) {
 	var res Resource
 	flag := false
@@ -12,7 +11,7 @@ func Use(opener ResourceOpener, input string) (err error) {
 			if err != nil {
 				return err
 			} else {
-                defer res.Close()
+				defer res.Close()
 				flag = true
 			}
 		}

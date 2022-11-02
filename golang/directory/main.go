@@ -4,6 +4,7 @@ import (
 	alert "directory/alerting"
 	"flag"
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
