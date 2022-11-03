@@ -6,12 +6,9 @@ import (
 	"log"
 	_ "math/rand"
 	"net"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
-
 	pb "main/pb"
-
 	"google.golang.org/grpc"
 )
 
@@ -40,7 +37,7 @@ type EmployeeManagementServer struct {
 	db *gorm.DB
 }
 
-func (s *EmployeeManagementServer) CreateNewDepartment(ctx context.Context, in *pb.NewDepartment) (*pb.Department, error) {
+func (s *EmployeeManagementServer) CreateDepartment(ctx context.Context, in *pb.NewDepartment) (*pb.Department, error) {
 	fmt.Println("creating department...")
 	//manager := &Employee{Name: in.GetName()}
 	//s.db.Debug().Where(manager).Find(manager)
@@ -61,7 +58,7 @@ func (s *EmployeeManagementServer) CreateNewDepartment(ctx context.Context, in *
 	return out, nil
 }
 
-func (s *EmployeeManagementServer) CreateNewEmployee(ctx context.Context, in *pb.Employee) (*pb.Employee, error) {
+func (s *EmployeeManagementServer) CreateEmployee(ctx context.Context, in *pb.Employee) (*pb.Employee, error) {
 	fmt.Printf("creating employee... with managerID %v", in.ManagerId)
 	var newEmp *Employee
 	if in.ManagerId != 0 {
@@ -132,10 +129,29 @@ func (s *EmployeeManagementServer) GetAllDepartments(ctx context.Context, in *pb
 	return allDepts, nil
 }
 
-func (s *EmployeeManagementServer) UpdateEmployee(ctx context.Context, in *pb.UpdatedEmployee) (*pb.Employee, error) {
+func (s *EmployeeManagementServer) UpdateEmployee(ctx context.Context, in *pb.Employee) (*pb.Employee, error) {
 	emp := &Employee{Model: gorm.Model{ID: uint(in.Id)}}
-	s.db.Debug().Model(emp).Update(Employee{Name: in.Name, Email: in.Email}).Find(emp)
+	fmt.Println(in.ManagerId)
+	updatedParams := &Employee{}
+	if in.DepartmentId != 0 {
+		updatedParams.DepartmentId = in.GetDepartmentId()
+	}
+	if in.Email != "" {
+		updatedParams.Email = in.GetEmail()
+	}
+	if in.ManagerId != 0 {
+		x := in.GetManagerId()
+		updatedParams.ManagerId = &x
+	}
+	if in.Name != "" {
+		updatedParams.Name = in.GetName()
+	}
+	if in.Role != "" {
+		updatedParams.Role = in.GetRole()
+	}
+	s.db.Debug().Model(emp).Update(updatedParams).Find(emp)
 	fmt.Println(emp)
+
 	return &pb.Employee{
 		Name:         emp.Name,
 		Email:        emp.Email,
@@ -166,7 +182,6 @@ func newServer() *EmployeeManagementServer {
 	if err != nil {
 		fmt.Printf("error occured %v", err)
 	}
-	//defer db.Close()
 	//db.DropTable(&Employee{})
 	//db.DropTable(&Department{})
 	//db.Debug().AutoMigrate(&Employee{}, &Department{})

@@ -22,13 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EmployeeManagementClient interface {
-	CreateNewDepartment(ctx context.Context, in *NewDepartment, opts ...grpc.CallOption) (*Department, error)
-	CreateNewEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error)
+	CreateDepartment(ctx context.Context, in *NewDepartment, opts ...grpc.CallOption) (*Department, error)
+	CreateEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error)
 	GetEmployeeById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Employee, error)
 	GetDepartmentById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Department, error)
 	GetAllEmployees(ctx context.Context, in *EmptyParams, opts ...grpc.CallOption) (EmployeeManagement_GetAllEmployeesClient, error)
 	GetAllDepartments(ctx context.Context, in *EmptyParams, opts ...grpc.CallOption) (*AllDepartments, error)
-	UpdateEmployee(ctx context.Context, in *UpdatedEmployee, opts ...grpc.CallOption) (*Employee, error)
+	UpdateEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error)
 	DeleteEmployeeById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Employee, error)
 }
 
@@ -40,18 +40,18 @@ func NewEmployeeManagementClient(cc grpc.ClientConnInterface) EmployeeManagement
 	return &employeeManagementClient{cc}
 }
 
-func (c *employeeManagementClient) CreateNewDepartment(ctx context.Context, in *NewDepartment, opts ...grpc.CallOption) (*Department, error) {
+func (c *employeeManagementClient) CreateDepartment(ctx context.Context, in *NewDepartment, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/pb.EmployeeManagement/CreateNewDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.EmployeeManagement/CreateDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *employeeManagementClient) CreateNewEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error) {
+func (c *employeeManagementClient) CreateEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error) {
 	out := new(Employee)
-	err := c.cc.Invoke(ctx, "/pb.EmployeeManagement/CreateNewEmployee", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.EmployeeManagement/CreateEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (c *employeeManagementClient) GetAllDepartments(ctx context.Context, in *Em
 	return out, nil
 }
 
-func (c *employeeManagementClient) UpdateEmployee(ctx context.Context, in *UpdatedEmployee, opts ...grpc.CallOption) (*Employee, error) {
+func (c *employeeManagementClient) UpdateEmployee(ctx context.Context, in *Employee, opts ...grpc.CallOption) (*Employee, error) {
 	out := new(Employee)
 	err := c.cc.Invoke(ctx, "/pb.EmployeeManagement/UpdateEmployee", in, out, opts...)
 	if err != nil {
@@ -139,13 +139,13 @@ func (c *employeeManagementClient) DeleteEmployeeById(ctx context.Context, in *I
 // All implementations must embed UnimplementedEmployeeManagementServer
 // for forward compatibility
 type EmployeeManagementServer interface {
-	CreateNewDepartment(context.Context, *NewDepartment) (*Department, error)
-	CreateNewEmployee(context.Context, *Employee) (*Employee, error)
+	CreateDepartment(context.Context, *NewDepartment) (*Department, error)
+	CreateEmployee(context.Context, *Employee) (*Employee, error)
 	GetEmployeeById(context.Context, *Id) (*Employee, error)
 	GetDepartmentById(context.Context, *Id) (*Department, error)
 	GetAllEmployees(*EmptyParams, EmployeeManagement_GetAllEmployeesServer) error
 	GetAllDepartments(context.Context, *EmptyParams) (*AllDepartments, error)
-	UpdateEmployee(context.Context, *UpdatedEmployee) (*Employee, error)
+	UpdateEmployee(context.Context, *Employee) (*Employee, error)
 	DeleteEmployeeById(context.Context, *Id) (*Employee, error)
 	mustEmbedUnimplementedEmployeeManagementServer()
 }
@@ -154,11 +154,11 @@ type EmployeeManagementServer interface {
 type UnimplementedEmployeeManagementServer struct {
 }
 
-func (UnimplementedEmployeeManagementServer) CreateNewDepartment(context.Context, *NewDepartment) (*Department, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNewDepartment not implemented")
+func (UnimplementedEmployeeManagementServer) CreateDepartment(context.Context, *NewDepartment) (*Department, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDepartment not implemented")
 }
-func (UnimplementedEmployeeManagementServer) CreateNewEmployee(context.Context, *Employee) (*Employee, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNewEmployee not implemented")
+func (UnimplementedEmployeeManagementServer) CreateEmployee(context.Context, *Employee) (*Employee, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployee not implemented")
 }
 func (UnimplementedEmployeeManagementServer) GetEmployeeById(context.Context, *Id) (*Employee, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployeeById not implemented")
@@ -172,7 +172,7 @@ func (UnimplementedEmployeeManagementServer) GetAllEmployees(*EmptyParams, Emplo
 func (UnimplementedEmployeeManagementServer) GetAllDepartments(context.Context, *EmptyParams) (*AllDepartments, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllDepartments not implemented")
 }
-func (UnimplementedEmployeeManagementServer) UpdateEmployee(context.Context, *UpdatedEmployee) (*Employee, error) {
+func (UnimplementedEmployeeManagementServer) UpdateEmployee(context.Context, *Employee) (*Employee, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployee not implemented")
 }
 func (UnimplementedEmployeeManagementServer) DeleteEmployeeById(context.Context, *Id) (*Employee, error) {
@@ -191,38 +191,38 @@ func RegisterEmployeeManagementServer(s grpc.ServiceRegistrar, srv EmployeeManag
 	s.RegisterService(&EmployeeManagement_ServiceDesc, srv)
 }
 
-func _EmployeeManagement_CreateNewDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _EmployeeManagement_CreateDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NewDepartment)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EmployeeManagementServer).CreateNewDepartment(ctx, in)
+		return srv.(EmployeeManagementServer).CreateDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.EmployeeManagement/CreateNewDepartment",
+		FullMethod: "/pb.EmployeeManagement/CreateDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EmployeeManagementServer).CreateNewDepartment(ctx, req.(*NewDepartment))
+		return srv.(EmployeeManagementServer).CreateDepartment(ctx, req.(*NewDepartment))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EmployeeManagement_CreateNewEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _EmployeeManagement_CreateEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Employee)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EmployeeManagementServer).CreateNewEmployee(ctx, in)
+		return srv.(EmployeeManagementServer).CreateEmployee(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.EmployeeManagement/CreateNewEmployee",
+		FullMethod: "/pb.EmployeeManagement/CreateEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EmployeeManagementServer).CreateNewEmployee(ctx, req.(*Employee))
+		return srv.(EmployeeManagementServer).CreateEmployee(ctx, req.(*Employee))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -303,7 +303,7 @@ func _EmployeeManagement_GetAllDepartments_Handler(srv interface{}, ctx context.
 }
 
 func _EmployeeManagement_UpdateEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatedEmployee)
+	in := new(Employee)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -315,7 +315,7 @@ func _EmployeeManagement_UpdateEmployee_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/pb.EmployeeManagement/UpdateEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EmployeeManagementServer).UpdateEmployee(ctx, req.(*UpdatedEmployee))
+		return srv.(EmployeeManagementServer).UpdateEmployee(ctx, req.(*Employee))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -346,12 +346,12 @@ var EmployeeManagement_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*EmployeeManagementServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateNewDepartment",
-			Handler:    _EmployeeManagement_CreateNewDepartment_Handler,
+			MethodName: "CreateDepartment",
+			Handler:    _EmployeeManagement_CreateDepartment_Handler,
 		},
 		{
-			MethodName: "CreateNewEmployee",
-			Handler:    _EmployeeManagement_CreateNewEmployee_Handler,
+			MethodName: "CreateEmployee",
+			Handler:    _EmployeeManagement_CreateEmployee_Handler,
 		},
 		{
 			MethodName: "GetEmployeeById",

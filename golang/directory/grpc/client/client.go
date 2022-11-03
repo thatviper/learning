@@ -3,15 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
 	"log"
+	pb "main/pb"
 	_ "math/rand"
 	"time"
-
-	_ "github.com/lib/pq"
-
-	pb "main/pb"
-
-	"google.golang.org/grpc"
 )
 
 const (
@@ -62,9 +59,9 @@ func main() {
 
 	//r, err := c.GetAllDepartments(ctx, &pb.EmptyParams{})
 
-	//r, err := c.UpdateEmployee(ctx, &pb.UpdatedEmployee{Id: 1, Name: "Vamshi", Email: "vamshi@beautifulcode.in"})
+	r, err := c.UpdateEmployee(ctx, &pb.Employee{Id: 1, Name: "Mani", Email: "mani@beautifulcode.in", Role: "Senior Developer"})
 
-	r, err := c.DeleteEmployeeById(ctx, &pb.Id{Id: 1})
+	//r, err := c.DeleteEmployeeById(ctx, &pb.Id{Id: 1})
 
 	if err != nil {
 		log.Fatalf("couldnt create deparment: %v", err)
