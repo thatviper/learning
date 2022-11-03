@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "main/pb";
+
+service EmployeeManagement {
+    rpc CreateDepartment (NewDepartment) returns (Department) {};//
+    rpc CreateEmployee (Employee) returns (Employee){};//
+    rpc GetEmployeeById (Id) returns (Employee) {};//
+    rpc GetDepartmentById (Id) returns (Department) {};
+    rpc GetAllEmployees (EmptyParams) returns (stream Employee) {};
+    rpc GetAllDepartments (EmptyParams) returns (AllDepartments) {};//
+    rpc UpdateEmployee (Employee) returns (Employee) {};//
+    rpc DeleteEmployeeById (Id) returns (Employee) {};//
+}
+
+message EmptyParams {}
+
+message Id{
+    int32 id = 1;
+}
+
+message Employee{
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+    string role = 4;
+    int32 managerId = 6;
+    int32 departmentId = 7;
+}
+
+message NewDepartment{
+    string name = 1;
+}
+
+message Department{
+    string name = 2;
+    repeated Employee Employees = 3;
+}
+
+message AllDepartments{
+    repeated Department Departments = 1;
+}
